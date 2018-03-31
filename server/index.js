@@ -33,11 +33,12 @@ if (process.env.NODE_ENV !== "production") {
   const webpackMiddleware = require("webpack-dev-middleware");
   const webpack = require("webpack");
   const webpackConfig = require("../webpack.config.js");
+  const historyApiFallback = require("connect-history-api-fallback");
+  app.use(historyApiFallback({
+      verbose: false
+  }))
   app.use(
-    webpackMiddleware(webpack(webpackConfig), {
-      hot: true,
-      historyApiFallback: true
-    })
+    webpackMiddleware(webpack(webpackConfig))
   );
 } else {
   app.use(express.static("dist"));

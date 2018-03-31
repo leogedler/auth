@@ -1,7 +1,7 @@
-var webpack = require('webpack');
-var path = require('path');
-var HtmlWebpackPlugin = require('html-webpack-plugin');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
+var webpack = require("webpack");
+var path = require("path");
+var HtmlWebpackPlugin = require("html-webpack-plugin");
+const ExtractTextPlugin = require("extract-text-webpack-plugin");
 
 const VENDOR_LIBS = [
   "axios",
@@ -19,42 +19,69 @@ const VENDOR_LIBS = [
 
 module.exports = {
   entry: {
-    bundle: './client/src/index.js',
+    bundle: "./client/src/index.js",
     vendor: VENDOR_LIBS
   },
   output: {
-    path: path.join(__dirname, 'dist'),
-    filename: '[name].[chunkhash].js'
+    path: path.join(__dirname, "dist"),
+    filename: "[name].[chunkhash].js"
   },
   module: {
     rules: [
       {
-        use: 'babel-loader',
+        use: "babel-loader",
         test: /\.js$/,
         exclude: /node_module/
       },
       {
         loader: ExtractTextPlugin.extract({
-            loader: 'css-loader'
+          loader: "css-loader"
         }),
-         test: /\.css$/
-     },
+        test: /\.css$/
+      },
+      {
+        test: /\.(gif|png|jpe?g|svg)$/i,
+        use: [
+          {
+            loader: "url-loader",
+            options: { limit: 40000 }
+          },
+          {
+            loader: "image-webpack-loader",
+            options: {
+              mozjpeg: {
+                progressive: true
+              },
+              gifsicle: {
+                interlaced: false
+              },
+              optipng: {
+                optimizationLevel: 7
+              },
+              pngquant: {
+                quality: "75-90",
+                speed: 3
+              }
+            }
+          }
+        ]
+      }
     ]
   },
   plugins: [
     new webpack.optimize.CommonsChunkPlugin({
-      names: ['vendor', 'manifest']
+      names: ["vendor", "manifest"]
     }),
     new HtmlWebpackPlugin({
-      template: './client/src/index.html'
+      template: "./client/src/index.html"
     }),
     new webpack.DefinePlugin({
-      'process.env': {
-        'NODE_ENV': JSON.stringify('production')
+      "process.env": {
+        NODE_ENV: JSON.stringify("production")
       }
     }),
     new ExtractTextPlugin({
-      filename: 'style.[chunkhash].css'
+      filename: "style.[chunkhash].css"
     })
   ]
 };
