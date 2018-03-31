@@ -10,7 +10,7 @@ class Signup extends Component {
 
         console.log('error', error);
         return (
-            <fieldset className="form-group">
+            <fieldset className="form-group error">
                 <label>{field.label}:</label>
                 <input {...field.input} type={field.type} className="form-control" />
                 <div className="error">

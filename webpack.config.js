@@ -1,6 +1,7 @@
 var webpack = require('webpack');
 var path = require('path');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 const VENDOR_LIBS = [
   "axios",
@@ -31,10 +32,13 @@ module.exports = {
         use: 'babel-loader',
         test: /\.js$/,
         exclude: /node_module/
-      },{
-        use: ['style-loader', 'css-loader'],
-        test: /\.css$/
-      }
+      },
+      {
+        loader: ExtractTextPlugin.extract({
+            loader: 'css-loader'
+        }),
+         test: /\.css$/
+     },
     ]
   },
   plugins: [
@@ -48,6 +52,9 @@ module.exports = {
       'process.env': {
         'NODE_ENV': JSON.stringify('production')
       }
+    }),
+    new ExtractTextPlugin({
+      filename: 'style.[chunkhash].css'
     })
   ]
 };
