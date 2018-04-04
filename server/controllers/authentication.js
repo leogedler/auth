@@ -8,33 +8,31 @@ const tokenForUser = (user) => {
     return jwt.encode({ sub: user.id, iat: timestamp }, config.secret );
 }
 
-const signup = (req, res, next) => {
+const signup = async (req, res, next) => {
     const { email, password } = req.body;
 
-    if(!email || !password) return res.status(422).json({error: 'You must define an emai and password'});
+    if(!email || !password) return res.status(422).json({error: 'You must define an email and password'});
 
-    //  See if a user with the given email exists
-    User.findOne({email}).then((existingUser)=>{
-        // If a user with email does exist, return an error
-        if(existingUser)  {
+    try {
+        const existingUser = await User.findOne({email});
+        if(existingUser){
             throw {error: 'Email is in use', status: 422};
         }
-
         // If a user with email does NOT exist, create and save user record
         const user = new User({
             email,
             password
         })
-        return user.save();
-    }).then((userCreated) => {   
+        const userCreated = await user.save();
         return res.json({ token: tokenForUser(userCreated) });
-    }).catch((err)=>{
-        console.log('error', err);
-        if(err.status === 422){
-             return res.status(422).json(err);
+
+    } catch (error) {
+        console.log('error', error);
+        if(error.status === 422){
+             return res.status(422).json(error);
         }
-        return res.status(500).json(err);
-    })
+        return res.status(500).json(error);
+    }
 }
 
 const signin = (req, res, next) => {

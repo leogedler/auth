@@ -19,8 +19,11 @@ export default function(ComposedComponent) {
         }
 
         render(){
-            console.log('context', this.context);
-            return <ComposedComponent {...this.props}></ComposedComponent>
+            if(this.props.authenticated){
+                return <ComposedComponent {...this.props}></ComposedComponent>
+            }else{
+                return null
+            }
         }
     }
 
